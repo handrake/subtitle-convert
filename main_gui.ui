@@ -153,6 +153,12 @@
           </item>
           <item>
            <widget class="QPushButton" name="convert_button">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
             <property name="text">
              <string>변환</string>
             </property>
@@ -167,6 +173,7 @@
    </item>
   </layout>
   <zorder></zorder>
+  <zorder>output_groupBox</zorder>
  </widget>
  <resources/>
  <connections/>
