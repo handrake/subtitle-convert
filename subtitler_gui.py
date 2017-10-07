@@ -16,6 +16,7 @@ class SubtitlerMainDialog(QDialog):
         self.delete_button.released.connect(self._delete_input_files)
 
         self.output_folder_edit.setText(os.path.expanduser('~'))
+        self.output_folder_edit.returnPressed.connect(self._handle_folder_input)
         self.browse_output_folder_button.released.connect(self._select_output_folder)
 
     def _select_input_file(self):
@@ -29,13 +30,16 @@ class SubtitlerMainDialog(QDialog):
         for selectedItem in self.input_file_list.selectedItems():
             self.input_file_list.takeItem(self.input_file_list.row(selectedItem))
 
+    def _handle_folder_input(self):
+        folder_name = self.output_folder_edit.text()
+        if not os.path.exists(folder_name):
+            QMessageBox.information(self, "Error", "폴더가 없습니다")
+            self.output_folder_edit.setText(os.path.expanduser('~'))
+
     def _select_output_folder(self):
         folder_name = QFileDialog.getExistingDirectory(directory=os.path.expanduser('~'),
                                                        options=QFileDialog.ShowDirsOnly)
-        if not os.path.exists(folder_name):
-            QMessageBox.Information("폴더가 없습니다")
-        else:
-            self.output_folder_edit.setText(folder_name)
+        self.output_folder_edit.setText(folder_name)
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
