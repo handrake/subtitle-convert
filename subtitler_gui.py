@@ -10,6 +10,7 @@ class SubtitlerMainDialog(QDialog):
         uic.loadUi(os.path.join(os.path.dirname(__file__), "main_gui.ui"), self)
 
         self.input_file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.input_folder = os.path.expanduser('~')
 
         self.add_file_button.released.connect(self._select_input_file)
         self.delete_all_button.released.connect(self._delete_all_input_files)
@@ -22,7 +23,9 @@ class SubtitlerMainDialog(QDialog):
         self.output_folder = os.path.expanduser('~')
 
     def _select_input_file(self):
-        file_names, _ = QFileDialog.getOpenFileNames(directory=os.path.expanduser('~'))
+        file_names, _ = QFileDialog.getOpenFileNames(directory=self.input_folder)
+        if file_names:
+            self.input_folder = os.path.dirname(file_names[0])
         self.input_file_list.addItems(file_names)
 
     def _delete_all_input_files(self):
@@ -45,7 +48,7 @@ class SubtitlerMainDialog(QDialog):
         self.output_folder_edit.setText(folder_name)
 
     def _select_output_folder(self):
-        folder_name = QFileDialog.getExistingDirectory(directory=os.path.expanduser('~'),
+        folder_name = QFileDialog.getExistingDirectory(directory=self.output_folder,
                                                        options=QFileDialog.ShowDirsOnly)
         self._set_output_folder(folder_name)
 
