@@ -2,7 +2,23 @@ import sys
 import os
 
 from PyQt5 import QtCore, uic
+from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
+
+SUPPORTED_FILE_TYPES = ["smi", "srt"]
+
+class SubtitlerWorkerThread(QThread):
+    signal = QtCore.pyqtSignal(int)
+
+    def __init__(self, input_files, output_folder, output_type, overwrite_on = False):
+        QThread.__init__(self)
+        self.input_files = input_files
+        self.output_folder = output_folder
+        self.output_type = output_type
+        self.overwrite_on = overwrite_on
+
+    def run(self):
+        self.signal.emit(0)
 
 class SubtitlerMainDialog(QDialog):
     def __init__(self):
@@ -18,7 +34,13 @@ class SubtitlerMainDialog(QDialog):
 
         self.output_folder_edit.setText(os.path.expanduser('~'))
         self.output_folder_edit.returnPressed.connect(self._handle_folder_input)
+        self.output_type_combo.currentIndexChanged.connect(self._update_output_type)
+        self.output_type_combo.insertItems(0, SUPPORTED_FILE_TYPES)
+        self.output_type = self.output_type_combo.currentText()
+
         self.browse_output_folder_button.released.connect(self._select_output_folder)
+
+        self.convert_button.released.connect(self.process_conversion)
 
         self.output_folder = os.path.expanduser('~')
 
@@ -51,6 +73,19 @@ class SubtitlerMainDialog(QDialog):
         folder_name = QFileDialog.getExistingDirectory(directory=self.output_folder,
                                                        options=QFileDialog.ShowDirsOnly)
         self._set_output_folder(folder_name)
+
+    def _update_output_type(self):
+        self.output_type = SUPPORTED_FILE_TYPES[self.output_type_combo.currentIndex()]
+
+    def do_something(self):
+        QMessageBox.information(self, "변환", "변환할 준비가 됐습니다")
+
+    def process_conversion(self):
+        self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
+                                                for i in range(self.input_file_list.count())],
+                                                self.output_type, self.output_folder, True)
+        self.worker_thread.signal.connect(self.do_something)
+        self.worker_thread.start()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)

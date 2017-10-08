@@ -135,7 +135,7 @@
            <widget class="QLineEdit" name="output_folder_edit"/>
           </item>
           <item>
-           <widget class="QComboBox" name="file_extension_combo"/>
+           <widget class="QComboBox" name="output_type_combo"/>
           </item>
          </layout>
         </item>
@@ -173,7 +173,6 @@
    </item>
   </layout>
   <zorder></zorder>
-  <zorder>output_groupBox</zorder>
  </widget>
  <resources/>
  <connections/>
