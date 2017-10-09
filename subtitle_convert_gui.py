@@ -12,7 +12,7 @@ SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
 SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
 
-class SubtitlerWorkerThread(QThread):
+class SubtitleConvertWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on = False):
@@ -48,7 +48,7 @@ class SubtitlerWorkerThread(QThread):
                         self.log_signal.emit("<b>{}을 변환하지 못했습니다</b>".format(input_file_name))
 
 
-class SubtitlerProcessDialog(QDialog):
+class SubtitleConvertProcessDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self)
         uic.loadUi(os.path.join(os.path.dirname(__file__), "process_gui.ui"), self)
@@ -58,7 +58,7 @@ class SubtitlerProcessDialog(QDialog):
     def update_log_text(self, line):
         self.log_text_browser.append(line)
 
-class SubtitlerMainDialog(QDialog):
+class SubtitleConvertMainDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self)
         uic.loadUi(os.path.join(os.path.dirname(__file__), "main_gui.ui"), self)
@@ -141,9 +141,9 @@ class SubtitlerMainDialog(QDialog):
             QMessageBox.information(self, "", "변환할 파일이 없습니다")
             return
 
-        self.process_dialog = SubtitlerProcessDialog()
+        self.process_dialog = SubtitleConvertProcessDialog()
 
-        self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
+        self.worker_thread = SubtitleConvertWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
                                                    self.output_folder, self.output_type,
                                                    self.output_encoding, True)
@@ -154,6 +154,6 @@ class SubtitlerMainDialog(QDialog):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    dialog = SubtitlerMainDialog()
+    dialog = SubtitleConvertMainDialog()
     dialog.show()
     app.exec_()
