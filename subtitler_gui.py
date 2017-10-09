@@ -77,14 +77,10 @@ class SubtitlerMainDialog(QDialog):
     def _update_output_type(self):
         self.output_type = SUPPORTED_FILE_TYPES[self.output_type_combo.currentIndex()]
 
-    def do_something(self):
-        QMessageBox.information(self, "변환", "변환할 준비가 됐습니다")
-
     def process_conversion(self):
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
                                                 for i in range(self.input_file_list.count())],
                                                 self.output_type, self.output_folder, True)
-        self.worker_thread.signal.connect(self.do_something)
         self.worker_thread.start()
 
 if __name__ == "__main__":
