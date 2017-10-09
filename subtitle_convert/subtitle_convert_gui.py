@@ -1,9 +1,8 @@
-import sys
 import os
 
 from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread, QSettings
-from PyQt5.QtWidgets import QDialog, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QAbstractItemView, QMessageBox
 
 from pysami2 import Smi
 
@@ -18,7 +17,7 @@ QSETTINGS_APPLICATION = "Subtitle Convert"
 class SubtitleConvertWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on):
+    def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on): # pylint: disable=too-many-arguments
         QThread.__init__(self)
         self.input_files = input_files
         self.output_folder = output_folder
@@ -31,7 +30,8 @@ class SubtitleConvertWorkerThread(QThread):
             input_file_name = os.path.basename(input_file)
             input_type = os.path.splitext(input_file)[1].lower()[1:]
             output_file = os.path.join(self.output_folder,
-                                       os.path.splitext(input_file_name)[0] + '.' + self.output_type)
+                                       os.path.splitext(input_file_name)[0] +
+                                       '.' + self.output_type)
             output_file_name = os.path.basename(output_file)
             if os.path.exists(output_file) and not self.overwrite_on:
                 self.log_signal.emit("{}을 건너뜁니다...".format(input_file_name))
@@ -41,14 +41,12 @@ class SubtitleConvertWorkerThread(QThread):
             with open(output_file, 'w', encoding=self.output_encoding) as file_out:
                 if input_type == "smi":
                     smi = Smi(input_file)
-                    try:
-                        if self.output_type == "srt":
-                            file_out.write(smi.convert('srt', lang='KRCC'))
-                        elif self.output_type == "txt":
-                            file_out.write(smi.convert('plain', lang='KRCC'))
-                        self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
-                    except:
-                        self.log_signal.emit("<b>{}을 변환하지 못했습니다</b>".format(input_file_name))
+                    if self.output_type == "srt":
+                        file_out.write(smi.convert('srt', lang='KRCC'))
+                    elif self.output_type == "txt":
+                        file_out.write(smi.convert('plain', lang='KRCC'))
+                    self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
+                    # self.log_signal.emit("<b>{}을 변환하지 못했습니다</b>".format(input_file_name))
 
 
 class SubtitleConvertProcessDialog(QDialog):
@@ -96,6 +94,9 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.convert_button.released.connect(self.process_conversion)
 
+        self.process_dialog = None
+        self.worker_thread = None
+
         self.finished.connect(self._clean_up)
 
     def _select_input_file(self):
@@ -108,8 +109,8 @@ class SubtitleConvertMainDialog(QDialog):
         self.input_file_list.clear()
 
     def _delete_input_files(self):
-        for selectedItem in self.input_file_list.selectedItems():
-            self.input_file_list.takeItem(self.input_file_list.row(selectedItem))
+        for selected_item in self.input_file_list.selectedItems():
+            self.input_file_list.takeItem(self.input_file_list.row(selected_item))
 
     def _handle_folder_input(self):
         folder_name = self.output_folder_edit.text()
@@ -144,7 +145,7 @@ class SubtitleConvertMainDialog(QDialog):
             file = self.input_file_list.item(i).text()
             file_type = os.path.splitext(file)[1].lower()[1:]
             if (not os.path.exists(file) or file_type == self.output_type
-                or file_type not in SUPPORTED_INPUT_TYPES):
+                    or file_type not in SUPPORTED_INPUT_TYPES):
                 to_be_deleted.append(self.input_file_list.item(i))
 
         for item in to_be_deleted:
@@ -160,10 +161,11 @@ class SubtitleConvertMainDialog(QDialog):
         self.process_dialog = SubtitleConvertProcessDialog()
 
         self.worker_thread = SubtitleConvertWorkerThread([str(self.input_file_list.item(i).text())
-                                                   for i in range(self.input_file_list.count())],
-                                                   self.last_output_folder, self.output_type,
-                                                   self.output_encoding,
-                                                   self.overwrite_check.isChecked())
+                                                          for i in
+                                                          range(self.input_file_list.count())],
+                                                         self.last_output_folder, self.output_type,
+                                                         self.output_encoding,
+                                                         self.overwrite_check.isChecked())
 
         self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
         self.worker_thread.start()
