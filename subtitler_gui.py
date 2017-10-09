@@ -24,7 +24,6 @@ class SubtitlerWorkerThread(QThread):
         self.overwrite_on = overwrite_on
 
     def run(self):
-        self.log_signal.emit("{}에 파일이 저장됩니다".format(self.output_folder))
         for input_file in self.input_files:
             input_file_name = os.path.basename(input_file)
             input_type = os.path.splitext(input_file)[1].lower()[1:]
