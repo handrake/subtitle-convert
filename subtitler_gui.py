@@ -11,7 +11,7 @@ SUPPORTED_INPUT_TYPES = ["smi"]
 SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
 class SubtitlerWorkerThread(QThread):
-    signal = QtCore.pyqtSignal(int)
+    log_signal = QtCore.pyqtSignal(str)
 
     def __init__(self, input_files, output_folder, output_type, overwrite_on = False):
         QThread.__init__(self)
@@ -21,7 +21,30 @@ class SubtitlerWorkerThread(QThread):
         self.overwrite_on = overwrite_on
 
     def run(self):
-        self.signal.emit(0)
+        self.log_signal.emit("{}에 파일이 저장됩니다".format(self.output_folder))
+        for input_file in self.input_files:
+            input_file_name = os.path.basename(input_file)
+            input_type = os.path.splitext(input_file)[1].lower()[1:]
+            output_file = os.path.join(self.output_folder,
+                                       os.path.splitext(input_file_name)[0] + '.' + self.output_type)
+            output_file_name = os.path.basename(output_file)
+            if os.path.exists(output_file) and not self.overwrite_on:
+                self.log.signal.emit("{}을 건너뜁니다...".format(input_file_name))
+                continue
+            self.log_signal.emit("{}을 읽습니다...".format(input_file_name))
+
+            with open(output_file, 'w') as file_out:
+                if input_type == "smi":
+                    smi = Smi(input_file)
+                    try:
+                        if self.output_type == "srt":
+                            file_out.write(smi.convert('srt', lang='KRCC'))
+                        elif self.output_type == "txt":
+                            file_out.write(smi.convert('plain', lang='KRCC'))
+                        self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
+                    except:
+                        self.log_signal.emit("<b>{}을 변환하지 못했습니다</b>".format(input_file_name))
+
 
 class SubtitlerProcessDialog(QDialog):
     def __init__(self):
@@ -29,6 +52,9 @@ class SubtitlerProcessDialog(QDialog):
         uic.loadUi(os.path.join(os.path.dirname(__file__), "process_gui.ui"), self)
 
         self.ok_button.released.connect(self.close)
+
+    def update_log_text(self, line):
+        self.log_text_browser.append(line)
 
 class SubtitlerMainDialog(QDialog):
     def __init__(self):
@@ -110,7 +136,8 @@ class SubtitlerMainDialog(QDialog):
 
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
-                                                   self.output_type, self.output_folder, True)
+                                                   self.output_folder, self.output_type, True)
+        self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
         self.worker_thread.start()
         self.process_dialog.exec()
 
