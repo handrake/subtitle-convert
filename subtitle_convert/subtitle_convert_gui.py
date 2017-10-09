@@ -119,6 +119,16 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.finished.connect(self._clean_up)
 
+    def dragEnterEvent(self, event):
+        if event.mimeData().hasUrls:
+            event.accept()
+        else:
+            event.ignore()
+
+    def dropEvent(self, event):
+        if event.mimeData().hasUrls:
+            self.input_file_list.addItems([x.toLocalFile() for x in event.mimeData().urls()])
+
     def _select_input_file(self):
         file_names, _ = QFileDialog.getOpenFileNames(directory=self.last_input_folder)
         if file_names:
