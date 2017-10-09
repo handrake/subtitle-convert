@@ -18,7 +18,7 @@ QSETTINGS_APPLICATION = "Subtitle Convert"
 class SubtitleConvertWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on = False):
+    def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on):
         QThread.__init__(self)
         self.input_files = input_files
         self.output_folder = output_folder
