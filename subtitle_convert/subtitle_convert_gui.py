@@ -98,8 +98,6 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.finished.connect(self._clean_up)
 
-        self.output_folder = os.path.expanduser('~')
-
     def _select_input_file(self):
         file_names, _ = QFileDialog.getOpenFileNames(directory=self.last_input_folder)
         if file_names:
@@ -163,7 +161,7 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.worker_thread = SubtitleConvertWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
-                                                   self.output_folder, self.output_type,
+                                                   self.last_output_folder, self.output_type,
                                                    self.output_encoding, True)
 
         self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
