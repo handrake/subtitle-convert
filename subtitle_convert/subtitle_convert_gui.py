@@ -85,10 +85,14 @@ class SubtitleConvertMainDialog(QDialog):
             self.last_input_folder = self.settings.value("last_input_folder")
         else:
             self.last_input_folder = os.path.expanduser('~')
+
         if self.settings.contains("last_output_folder"):
             self.last_output_folder = self.settings.value("last_output_folder")
         else:
             self.last_output_folder = os.path.expanduser('~')
+
+        if self.settings.contains("overwrite_on"):
+            self.overwrite_check.setChecked(bool(self.settings.value("overwrite_on")))
 
         self.input_file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
@@ -154,6 +158,7 @@ class SubtitleConvertMainDialog(QDialog):
     def _clean_up(self):
         self.settings.setValue("last_input_folder", self.last_input_folder)
         self.settings.setValue("last_output_folder", self.last_output_folder)
+        self.settings.setValue("overwrite_on", "1" if self.overwrite_check.isChecked() else "")
 
     def _validate_inputs(self):
         to_be_deleted = []
