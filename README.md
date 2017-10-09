@@ -7,10 +7,10 @@
 
 ```
 git clone https://github.com/handrake/subtitle-convert.git
-'''
+```
 으로 소스를 다운받고
 
-'''
+```
 pip install -r requirements.txt
 ```
 
