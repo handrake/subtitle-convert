@@ -18,3 +18,5 @@ pip install -r requirements.txt
 ```
 python -m subtitle_convert
 ```
+
+<img src="https://i.imgur.com/4MQleRs.png" width="400">
