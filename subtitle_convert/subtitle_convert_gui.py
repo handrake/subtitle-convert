@@ -34,7 +34,7 @@ class SubtitleConvertWorkerThread(QThread):
                                        os.path.splitext(input_file_name)[0] + '.' + self.output_type)
             output_file_name = os.path.basename(output_file)
             if os.path.exists(output_file) and not self.overwrite_on:
-                self.log.signal.emit("{}을 건너뜁니다...".format(input_file_name))
+                self.log_signal.emit("{}을 건너뜁니다...".format(input_file_name))
                 continue
             self.log_signal.emit("{}을 읽습니다...".format(input_file_name))
 
