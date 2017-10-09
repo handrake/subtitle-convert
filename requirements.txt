@@ -1,1 +1,4 @@
+chardet==3.0.4
 PyQt5==5.9
+pysami2==0.0.1
+sip==4.19.3
