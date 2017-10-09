@@ -7,10 +7,14 @@
 
 아직 pypi에 올라가 있지 않은 상황이라 소스를 git clone 등으로 다운받아야 합니다.
 
-<code>pip install -r requirements.txt</code>
+```
+pip install -r requirements.txt
+```
 
 를 통해 의존 라이브러리를 설치합니다.
 
 # 실행
 
-<code>python -m subtitle_convert</code>
+```
+python -m subtitle_convert
+```
