@@ -5,6 +5,8 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
 
+from samitizer import Smi
+
 SUPPORTED_INPUT_TYPES = ["smi"]
 SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
@@ -99,6 +101,11 @@ class SubtitlerMainDialog(QDialog):
 
     def process_conversion(self):
         self._validate_inputs()
+
+        if self.input_file_list.count() == 0:
+            QMessageBox.information(self, "", "변환할 파일이 없습니다")
+            return
+
         self.process_dialog = SubtitlerProcessDialog()
 
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
