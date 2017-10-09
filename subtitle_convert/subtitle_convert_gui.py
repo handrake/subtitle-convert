@@ -119,13 +119,13 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.finished.connect(self._clean_up)
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(self, event):  # pylint: disable=invalid-name, no-self-use
         if event.mimeData().hasUrls:
             event.accept()
         else:
             event.ignore()
 
-    def dropEvent(self, event):
+    def dropEvent(self, event):  # pylint: disable=invalid-name
         if event.mimeData().hasUrls:
             self.input_file_list.addItems([x.toLocalFile() for x in event.mimeData().urls()])
 
