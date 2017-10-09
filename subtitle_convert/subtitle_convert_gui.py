@@ -8,7 +8,7 @@ import pycaption
 import chardet
 
 SUPPORTED_INPUT_TYPES = ["smi", "srt"]
-SUPPORTED_OUTPUT_TYPES = ["smi", "srt", "txt"]
+SUPPORTED_OUTPUT_TYPES = ["smi", "srt"]
 
 SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
 
