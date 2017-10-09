@@ -77,10 +77,23 @@ class SubtitlerMainDialog(QDialog):
     def _update_output_type(self):
         self.output_type = SUPPORTED_FILE_TYPES[self.output_type_combo.currentIndex()]
 
+    def _validate_inputs(self):
+        to_be_deleted = []
+        for i in range(self.input_file_list.count()):
+            file = self.input_file_list.item(i).text()
+            file_type = os.path.splitext(file)[1].lower()[1:]
+            if (not os.path.exists(file) or file_type == self.output_type
+                or file_type not in SUPPORTED_FILE_TYPES):
+                to_be_deleted.append(self.input_file_list.item(i))
+
+        for item in to_be_deleted:
+            self.input_file_list.takeItem(self.input_file_list.row(item))
+
     def process_conversion(self):
+        self._validate_inputs()
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
-                                                for i in range(self.input_file_list.count())],
-                                                self.output_type, self.output_folder, True)
+                                                   for i in range(self.input_file_list.count())],
+                                                   self.output_type, self.output_folder, True)
         self.worker_thread.start()
 
 if __name__ == "__main__":
