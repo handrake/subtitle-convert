@@ -3,7 +3,7 @@ import os
 
 from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread
-from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
 
 from pysami2 import Smi
 
@@ -151,9 +151,3 @@ class SubtitleConvertMainDialog(QDialog):
         self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
         self.worker_thread.start()
         self.process_dialog.exec()
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    dialog = SubtitleConvertMainDialog()
-    dialog.show()
-    app.exec_()
