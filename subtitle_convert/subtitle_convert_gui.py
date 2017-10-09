@@ -2,7 +2,7 @@ import sys
 import os
 
 from PyQt5 import QtCore, uic
-from PyQt5.QtCore import QThread
+from PyQt5.QtCore import QThread, QSettings
 from PyQt5.QtWidgets import QDialog, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
 
 from pysami2 import Smi
@@ -11,6 +11,9 @@ SUPPORTED_INPUT_TYPES = ["smi"]
 SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
 SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
+
+QSETTINGS_ORGANIZATION = "Zerovity"
+QSETTINGS_APPLICATION = "Subtitle Convert"
 
 class SubtitleConvertWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
@@ -63,14 +66,23 @@ class SubtitleConvertMainDialog(QDialog):
         QDialog.__init__(self)
         uic.loadUi(os.path.join(os.path.dirname(__file__), "main_gui.ui"), self)
 
+        self.settings = QSettings(QSETTINGS_ORGANIZATION, QSETTINGS_APPLICATION)
+        if self.settings.contains("last_input_folder"):
+            self.last_input_folder = self.settings.value("last_input_folder")
+        else:
+            self.last_input_folder = os.path.expanduser('~')
+        if self.settings.contains("last_output_folder"):
+            self.last_output_folder = self.settings.value("last_output_folder")
+        else:
+            self.last_output_folder = os.path.expanduser('~')
+
         self.input_file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
-        self.input_folder = os.path.expanduser('~')
 
         self.add_file_button.released.connect(self._select_input_file)
         self.delete_all_button.released.connect(self._delete_all_input_files)
         self.delete_button.released.connect(self._delete_input_files)
 
-        self.output_folder_edit.setText(os.path.expanduser('~'))
+        self.output_folder_edit.setText(self.last_output_folder)
         self.output_folder_edit.returnPressed.connect(self._handle_folder_input)
         self.output_type_combo.currentIndexChanged.connect(self._update_output_type)
         self.output_type_combo.insertItems(0, SUPPORTED_OUTPUT_TYPES)
@@ -84,12 +96,14 @@ class SubtitleConvertMainDialog(QDialog):
 
         self.convert_button.released.connect(self.process_conversion)
 
+        self.finished.connect(self._clean_up)
+
         self.output_folder = os.path.expanduser('~')
 
     def _select_input_file(self):
-        file_names, _ = QFileDialog.getOpenFileNames(directory=self.input_folder)
+        file_names, _ = QFileDialog.getOpenFileNames(directory=self.last_input_folder)
         if file_names:
-            self.input_folder = os.path.dirname(file_names[0])
+            self.last_input_folder = os.path.dirname(file_names[0])
         self.input_file_list.addItems(file_names)
 
     def _delete_all_input_files(self):
@@ -103,16 +117,16 @@ class SubtitleConvertMainDialog(QDialog):
         folder_name = self.output_folder_edit.text()
         if not os.path.exists(folder_name):
             QMessageBox.information(self, "Error", "폴더가 없습니다")
-            self.output_folder_edit.setText(self.output_folder)
+            self.output_folder_edit.setText(self.last_output_folder)
         else:
-            self.output_folder = folder_name
+            self.last_output_folder = folder_name
 
     def _set_output_folder(self, folder_name):
-        self.output_folder = folder_name
+        self.last_output_folder = folder_name
         self.output_folder_edit.setText(folder_name)
 
     def _select_output_folder(self):
-        folder_name = QFileDialog.getExistingDirectory(directory=self.output_folder,
+        folder_name = QFileDialog.getExistingDirectory(directory=self.last_output_folder,
                                                        options=QFileDialog.ShowDirsOnly)
         self._set_output_folder(folder_name)
 
@@ -121,6 +135,10 @@ class SubtitleConvertMainDialog(QDialog):
 
     def _update_output_encoding(self):
         self.output_encoding = SUPPORTED_OUTPUT_ENCODING[self.output_encoding_combo.currentIndex()]
+
+    def _clean_up(self):
+        self.settings.setValue("last_input_folder", self.last_input_folder)
+        self.settings.setValue("last_output_folder", self.last_output_folder)
 
     def _validate_inputs(self):
         to_be_deleted = []
