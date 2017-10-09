@@ -1,4 +1,12 @@
+astroid==1.5.3
 chardet==3.0.4
+colorama==0.3.9
+isort==4.2.15
+lazy-object-proxy==1.3.1
+mccabe==0.6.1
+pylint==1.7.4
 PyQt5==5.9
 pysami2==0.0.1
 sip==4.19.3
+six==1.11.0
+wrapt==1.10.11
