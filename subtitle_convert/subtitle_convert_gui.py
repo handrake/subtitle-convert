@@ -162,7 +162,8 @@ class SubtitleConvertMainDialog(QDialog):
         self.worker_thread = SubtitleConvertWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
                                                    self.last_output_folder, self.output_type,
-                                                   self.output_encoding, True)
+                                                   self.output_encoding,
+                                                   self.overwrite_check.isChecked())
 
         self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
         self.worker_thread.start()
