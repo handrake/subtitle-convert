@@ -20,6 +20,13 @@ class SubtitlerWorkerThread(QThread):
     def run(self):
         self.signal.emit(0)
 
+class SubtitlerProcessDialog(QDialog):
+    def __init__(self):
+        QDialog.__init__(self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__), "process_gui.ui"), self)
+
+        self.ok_button.released.connect(self.close)
+
 class SubtitlerMainDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self)
@@ -91,6 +98,9 @@ class SubtitlerMainDialog(QDialog):
 
     def process_conversion(self):
         self._validate_inputs()
+        self.process_dialog = SubtitlerProcessDialog()
+        self.process_dialog.show()
+
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
                                                    self.output_type, self.output_folder, True)
