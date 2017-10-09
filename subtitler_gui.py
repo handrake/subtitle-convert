@@ -6,7 +6,7 @@ from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
 
 SUPPORTED_INPUT_TYPES = ["smi"]
-SUPPORTED_OUTPUT_TYPES = ["smi", "srt", "txt"]
+SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
 class SubtitlerWorkerThread(QThread):
     signal = QtCore.pyqtSignal(int)
