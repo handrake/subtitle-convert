@@ -5,7 +5,8 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread
 from PyQt5.QtWidgets import QDialog, QApplication, QFileDialog, QListWidgetItem, QAbstractItemView,QMessageBox
 
-SUPPORTED_FILE_TYPES = ["smi", "srt", "txt"]
+SUPPORTED_INPUT_TYPES = ["smi"]
+SUPPORTED_OUTPUT_TYPES = ["smi", "srt", "txt"]
 
 class SubtitlerWorkerThread(QThread):
     signal = QtCore.pyqtSignal(int)
@@ -42,7 +43,7 @@ class SubtitlerMainDialog(QDialog):
         self.output_folder_edit.setText(os.path.expanduser('~'))
         self.output_folder_edit.returnPressed.connect(self._handle_folder_input)
         self.output_type_combo.currentIndexChanged.connect(self._update_output_type)
-        self.output_type_combo.insertItems(0, SUPPORTED_FILE_TYPES)
+        self.output_type_combo.insertItems(0, SUPPORTED_OUTPUT_TYPES)
         self.output_type = self.output_type_combo.currentText()
 
         self.browse_output_folder_button.released.connect(self._select_output_folder)
@@ -82,7 +83,7 @@ class SubtitlerMainDialog(QDialog):
         self._set_output_folder(folder_name)
 
     def _update_output_type(self):
-        self.output_type = SUPPORTED_FILE_TYPES[self.output_type_combo.currentIndex()]
+        self.output_type = SUPPORTED_OUTPUT_TYPES[self.output_type_combo.currentIndex()]
 
     def _validate_inputs(self):
         to_be_deleted = []
@@ -90,7 +91,7 @@ class SubtitlerMainDialog(QDialog):
             file = self.input_file_list.item(i).text()
             file_type = os.path.splitext(file)[1].lower()[1:]
             if (not os.path.exists(file) or file_type == self.output_type
-                or file_type == "txt" or file_type not in SUPPORTED_FILE_TYPES):
+                or file_type not in SUPPORTED_INPUT_TYPES):
                 to_be_deleted.append(self.input_file_list.item(i))
 
         for item in to_be_deleted:
