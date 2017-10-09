@@ -4,10 +4,11 @@ from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread, QSettings
 from PyQt5.QtWidgets import QDialog, QFileDialog, QAbstractItemView, QMessageBox
 
-from pysami2 import Smi
+import pycaption
+import chardet
 
-SUPPORTED_INPUT_TYPES = ["smi"]
-SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
+SUPPORTED_INPUT_TYPES = ["smi", "srt"]
+SUPPORTED_OUTPUT_TYPES = ["smi", "srt", "txt"]
 
 SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
 
@@ -39,14 +40,29 @@ class SubtitleConvertWorkerThread(QThread):
             self.log_signal.emit("{}을 읽습니다...".format(input_file_name))
 
             with open(output_file, 'w', encoding=self.output_encoding) as file_out:
+                reader = None
+                encoding = None
+                content = None
+
+                with open(input_file, 'rb') as file_in:
+                    encoding = chardet.detect(file_in.read())['encoding']
+
+                with open(input_file, 'r', encoding=encoding) as file_in:
+                    content = file_in.read()
+
                 if input_type == "smi":
-                    smi = Smi(input_file)
-                    if self.output_type == "srt":
-                        file_out.write(smi.convert('srt', lang='KRCC'))
-                    elif self.output_type == "txt":
-                        file_out.write(smi.convert('plain', lang='KRCC'))
-                    self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
-                    # self.log_signal.emit("<b>{}을 변환하지 못했습니다</b>".format(input_file_name))
+                    reader = pycaption.SAMIReader().read(content)
+                elif input_type == "srt":
+                    reader = pycaption.SRTReader().read(content)
+
+                if self.output_type == "smi":
+                    file_out.write(pycaption.SAMIWriter().write(reader))
+                elif self.output_type == "srt":
+                    file_out.write(pycaption.SRTWriter().write(reader))
+                elif self.output_type == "txt":
+                    file_out.write(pycaption.TranscriptWriter().write(reader))
+
+                self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
 
 
 class SubtitleConvertProcessDialog(QDialog):
