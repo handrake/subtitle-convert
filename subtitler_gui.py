@@ -99,7 +99,7 @@ class SubtitlerMainDialog(QDialog):
     def process_conversion(self):
         self._validate_inputs()
         self.process_dialog = SubtitlerProcessDialog()
-        self.process_dialog.show()
+        self.process_dialog.exec()
 
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
