@@ -10,14 +10,17 @@ from samitizer import Smi
 SUPPORTED_INPUT_TYPES = ["smi"]
 SUPPORTED_OUTPUT_TYPES = ["srt", "txt"]
 
+SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
+
 class SubtitlerWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
 
-    def __init__(self, input_files, output_folder, output_type, overwrite_on = False):
+    def __init__(self, input_files, output_folder, output_type, output_encoding, overwrite_on = False):
         QThread.__init__(self)
         self.input_files = input_files
         self.output_folder = output_folder
         self.output_type = output_type
+        self.output_encoding = output_encoding
         self.overwrite_on = overwrite_on
 
     def run(self):
@@ -33,7 +36,7 @@ class SubtitlerWorkerThread(QThread):
                 continue
             self.log_signal.emit("{}을 읽습니다...".format(input_file_name))
 
-            with open(output_file, 'w') as file_out:
+            with open(output_file, 'w', encoding=self.output_encoding) as file_out:
                 if input_type == "smi":
                     smi = Smi(input_file)
                     try:
@@ -74,6 +77,10 @@ class SubtitlerMainDialog(QDialog):
         self.output_type_combo.insertItems(0, SUPPORTED_OUTPUT_TYPES)
         self.output_type = self.output_type_combo.currentText()
 
+        self.output_encoding_combo.currentIndexChanged.connect(self._update_output_encoding)
+        self.output_encoding_combo.insertItems(0, SUPPORTED_OUTPUT_ENCODING)
+        self.output_encoding = self.output_encoding_combo.currentText()
+
         self.browse_output_folder_button.released.connect(self._select_output_folder)
 
         self.convert_button.released.connect(self.process_conversion)
@@ -113,6 +120,9 @@ class SubtitlerMainDialog(QDialog):
     def _update_output_type(self):
         self.output_type = SUPPORTED_OUTPUT_TYPES[self.output_type_combo.currentIndex()]
 
+    def _update_output_encoding(self):
+        self.output_encoding = SUPPORTED_OUTPUT_ENCODING[self.output_encoding_combo.currentIndex()]
+
     def _validate_inputs(self):
         to_be_deleted = []
         for i in range(self.input_file_list.count()):
@@ -136,7 +146,9 @@ class SubtitlerMainDialog(QDialog):
 
         self.worker_thread = SubtitlerWorkerThread([str(self.input_file_list.item(i).text())
                                                    for i in range(self.input_file_list.count())],
-                                                   self.output_folder, self.output_type, True)
+                                                   self.output_folder, self.output_type,
+                                                   self.output_encoding, True)
+
         self.worker_thread.log_signal.connect(self.process_dialog.update_log_text)
         self.worker_thread.start()
         self.process_dialog.exec()
