@@ -5,9 +5,12 @@
 
 # 설치
 
-아직 pypi에 올라가 있지 않은 상황이라 소스를 git clone 등으로 다운받아야 합니다.
-
 ```
+git clone https://github.com/handrake/subtitle-convert.git
+'''
+으로 소스를 다운받고
+
+'''
 pip install -r requirements.txt
 ```
 
