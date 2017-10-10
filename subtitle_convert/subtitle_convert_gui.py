@@ -144,7 +144,10 @@ class SubtitleConvertMainWindow(QMainWindow):
                                               "icons",
                                               "closed-caption-logo.png")))
 
-        self.destroyed.connect(self._clean_up)
+    def closeEvent(self, _):  # pylint: disable=invalid-name
+        self.settings.setValue("last_input_folder", self.last_input_folder)
+        self.settings.setValue("last_output_folder", self.last_output_folder)
+        self.settings.setValue("overwrite_on", "1" if self.overwrite_check.isChecked() else "")
 
     def dragEnterEvent(self, event):  # pylint: disable=invalid-name, no-self-use
         if event.mimeData().hasUrls:
@@ -191,11 +194,6 @@ class SubtitleConvertMainWindow(QMainWindow):
 
     def _update_output_encoding(self):
         self.output_encoding = SUPPORTED_OUTPUT_ENCODING[self.output_encoding_combo.currentIndex()]
-
-    def _clean_up(self):
-        self.settings.setValue("last_input_folder", self.last_input_folder)
-        self.settings.setValue("last_output_folder", self.last_output_folder)
-        self.settings.setValue("overwrite_on", "1" if self.overwrite_check.isChecked() else "")
 
     def _open_information_dialog(self):  # pylint: disable=no-self-use
         information_dialog = SubtitleInformationDialog()
