@@ -1,7 +1,7 @@
 from pycaption.base import BaseWriter, CaptionNode
 
 class TextWriter(BaseWriter):
-    def write(self, captions):
+    def write(self, captions):  # pylint: disable=arguments-differ
         transcripts = []
 
         for lang in captions.get_languages():
@@ -13,7 +13,8 @@ class TextWriter(BaseWriter):
 
         return '\n'.join(transcripts)
 
-    def _strip_text(self, nodes, lang_transcript):
+    @staticmethod
+    def _strip_text(nodes, lang_transcript):
         for node in nodes:
             if node.type_ == CaptionNode.TEXT:
                 lang_transcript += node.content +"\n\n"
