@@ -2,7 +2,8 @@ import os
 
 from PyQt5 import QtCore, uic
 from PyQt5.QtCore import QThread, QSettings
-from PyQt5.QtWidgets import QDialog, QFileDialog, QAbstractItemView, QMessageBox
+from PyQt5.QtWidgets import QDialog, QFileDialog, QAbstractItemView, QMessageBox, QMainWindow
+from PyQt5.QtGui import QIcon
 
 import pycaption
 import chardet
@@ -70,14 +71,31 @@ class SubtitleConvertProcessDialog(QDialog):
         QDialog.__init__(self)
         uic.loadUi(os.path.join(os.path.dirname(__file__), "process_gui.ui"), self)
 
+        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__),
+                                              "images",
+                                              "icons",
+                                              "closed-caption-logo.png")))
+
         self.ok_button.released.connect(self.close)
 
     def update_log_text(self, line):
         self.log_text_browser.append(line)
 
-class SubtitleConvertMainDialog(QDialog):
+class SubtitleInformationDialog(QDialog):
     def __init__(self):
         QDialog.__init__(self)
+        uic.loadUi(os.path.join(os.path.dirname(__file__), "information_gui.ui"), self)
+
+        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__),
+                                              "images",
+                                              "icons",
+                                              "closed-caption-logo.png")))
+
+        self.ok_button.released.connect(self.close)
+
+class SubtitleConvertMainWindow(QMainWindow):
+    def __init__(self):
+        QMainWindow.__init__(self)
         uic.loadUi(os.path.join(os.path.dirname(__file__), "main_gui.ui"), self)
 
         self.settings = QSettings(QSETTINGS_ORGANIZATION, QSETTINGS_APPLICATION)
@@ -93,6 +111,10 @@ class SubtitleConvertMainDialog(QDialog):
 
         if self.settings.contains("overwrite_on"):
             self.overwrite_check.setChecked(bool(self.settings.value("overwrite_on")))
+
+        self.add_file_action.triggered.connect(self._select_input_file)
+        self.exit_action.triggered.connect(self.close)
+        self.information_action.triggered.connect(self._open_information_dialog)
 
         self.input_file_list.setSelectionMode(QAbstractItemView.ExtendedSelection)
 
@@ -117,7 +139,12 @@ class SubtitleConvertMainDialog(QDialog):
         self.process_dialog = None
         self.worker_thread = None
 
-        self.finished.connect(self._clean_up)
+        self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__),
+                                              "images",
+                                              "icons",
+                                              "closed-caption-logo.png")))
+
+        self.destroyed.connect(self._clean_up)
 
     def dragEnterEvent(self, event):  # pylint: disable=invalid-name, no-self-use
         if event.mimeData().hasUrls:
@@ -169,6 +196,10 @@ class SubtitleConvertMainDialog(QDialog):
         self.settings.setValue("last_input_folder", self.last_input_folder)
         self.settings.setValue("last_output_folder", self.last_output_folder)
         self.settings.setValue("overwrite_on", "1" if self.overwrite_check.isChecked() else "")
+
+    def _open_information_dialog(self):  # pylint: disable=no-self-use
+        information_dialog = SubtitleInformationDialog()
+        information_dialog.exec()
 
     def _validate_inputs(self):
         to_be_deleted = []
