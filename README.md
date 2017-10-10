@@ -22,4 +22,4 @@ pip install -r requirements.txt
 python -m subtitle_convert
 ```
 
-<img src="https://i.imgur.com/ilNHhb3.png" width="400">
+<img src="https://i.imgur.com/nIUM5UO.png" width="400">
