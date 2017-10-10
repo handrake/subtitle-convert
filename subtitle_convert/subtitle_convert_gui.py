@@ -8,8 +8,10 @@ from PyQt5.QtGui import QIcon
 import pycaption
 import chardet
 
+from subtitle_convert.subtitle_convert import TextWriter
+
 SUPPORTED_INPUT_TYPES = ["smi", "srt"]
-SUPPORTED_OUTPUT_TYPES = ["smi", "srt"]
+SUPPORTED_OUTPUT_TYPES = ["smi", "srt", "txt"]
 
 SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
 
@@ -61,7 +63,7 @@ class SubtitleConvertWorkerThread(QThread):
                 elif self.output_type == "srt":
                     file_out.write(pycaption.SRTWriter().write(reader))
                 elif self.output_type == "txt":
-                    file_out.write(pycaption.TranscriptWriter().write(reader))
+                    file_out.write(TextWriter().write(reader))
 
                 self.log_signal.emit("{}으로 변환했습니다".format(output_file_name))
 
