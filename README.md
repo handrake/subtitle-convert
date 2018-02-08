@@ -22,4 +22,10 @@ pip install -r requirements.txt
 python -m subtitle_convert
 ```
 
+# 빌드
+
+```
+pyinstaller subtitle_convert.spec --clean -y
+```
+
 <img src="https://i.imgur.com/nIUM5UO.png" width="400">
