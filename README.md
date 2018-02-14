@@ -6,7 +6,7 @@
 # 설치
 
 ## 실행 파일
-zip 파일을 받고 압축을 푼 후 subtitle_convert.exe를 실행합니다.
+SubtitleConvertSetup.exe 파일을 실행해서 설치합니다.
 
 ## 소스 코드
 ```
