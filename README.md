@@ -28,8 +28,20 @@ python -m subtitle_convert
 
 # 빌드
 
+## 실행 파일 생성
+
 ```
 pyinstaller subtitle_convert.spec --clean -y
 ```
+
+## 인스톨러 생성
+
+* Inno Setup과 [Unofficial Korean 언어팩](https://github.com/jrsoftware/issrc/blob/master/Files/Languages/Unofficial/Korean.isl)이 필요합니다.
+
+```
+iscc subtitle_convert.iss
+```
+
+Output 폴더에 SubtitleConvertSetup.exe가 만들어집니다.
 
 <img src="https://i.imgur.com/nIUM5UO.png" width="400">
