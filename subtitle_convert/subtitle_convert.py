@@ -1,7 +1,6 @@
-from pycaption.base import BaseWriter, CaptionNode
 from copy import deepcopy
+from pycaption.base import BaseWriter, CaptionNode
 from datetime import timedelta
-from six import text_type
 from lxml import etree
 
 class TextWriter(BaseWriter):
@@ -27,7 +26,7 @@ class TextWriter(BaseWriter):
         return lang_transcript
 
 class AtsWriter(BaseWriter):
-    def _format_timestamp(self, value):
+    def _format_timestamp(self, value):  # pylint: disable=no-self-use
         datetime_value = timedelta(milliseconds=(int(value / 1000)))
 
         str_value = ""
@@ -44,7 +43,7 @@ class AtsWriter(BaseWriter):
 
         return str_value.lstrip("0")
 
-    def _create_xml_header(self):
+    def _create_xml_header(self):  # pylint: disable=no-self-use
         base_xml = etree.Element("ISS")
 
         project_tree = etree.SubElement(base_xml, "Project")
@@ -70,7 +69,7 @@ class AtsWriter(BaseWriter):
 
         return base_xml, st_item_list, track
 
-    def write(self, caption_set):
+    def write(self, caption_set):  # pylint: disable=arguments-differ
         caption_set = deepcopy(caption_set)
 
         ats_captions = []
@@ -89,7 +88,8 @@ class AtsWriter(BaseWriter):
 
         doc = etree.ElementTree(base_xml)
 
-        return etree.tostring(doc, pretty_print=True, encoding='UTF-8', xml_declaration=True, method='xml')
+        return etree.tostring(doc, pretty_print=True, encoding='UTF-8',
+                              xml_declaration=True, method='xml')
 
     def _build_st_item(self, row_count, start, text):
         item = etree.Element("StItem")
@@ -136,10 +136,9 @@ class AtsWriter(BaseWriter):
 
         return ats_cells
 
-    def _recreate_line(self, ats, line):
+    def _recreate_line(self, ats, line):  # pylint: disable=no-self-use
         if line.type_ == CaptionNode.TEXT:
             return ats + '%s ' % line.content
         elif line.type_ == CaptionNode.BREAK:
             return ats + '\n'
-        else:
-            return ats
+        return ats
