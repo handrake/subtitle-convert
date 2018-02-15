@@ -1,7 +1,7 @@
 from copy import deepcopy
-from pycaption.base import BaseWriter, CaptionNode
 from datetime import timedelta
 from lxml import etree
+from pycaption.base import BaseWriter, CaptionNode
 
 class TextWriter(BaseWriter):
     def write(self, captions):  # pylint: disable=arguments-differ
