@@ -91,6 +91,18 @@ class AtsWriter(BaseWriter):
 
         return etree.tostring(doc, pretty_print=True, encoding='UTF-8', xml_declaration=True, method='xml')
 
+    def _build_st_item(self, row_count, start, text):
+        item = etree.Element("StItem")
+        item.set("Row", str(row_count))
+        item.set("TC", self._format_timestamp(start))
+        item.set("Memo", "")
+        st_text_list = etree.SubElement(item, "StTextList")
+        st_text = etree.SubElement(st_text_list, "StText")
+        st_text.set("StyleName", "지명, 인명 자막")
+        st_text.set("Mark", "")
+        st_text.text = text
+        return item
+
     def _recreate_lang(self, captions):
         ats_cells = []
         row_count = 0
@@ -98,11 +110,6 @@ class AtsWriter(BaseWriter):
         prev_caption = None
 
         for caption in captions:
-            item = etree.Element("StItem")
-            item.set("Row", str(row_count))
-            item.set("TC", self._format_timestamp(caption.start))
-            item.set("Memo", "")
-
             new_content = ''
             for node in caption.nodes:
                 new_content = self._recreate_line(new_content, node)
@@ -113,12 +120,15 @@ class AtsWriter(BaseWriter):
 
             new_content = '|'.join(map(str.strip, new_content.split('\n')))
 
-            st_text_list = etree.SubElement(item, "StTextList")
-            st_text = etree.SubElement(st_text_list, "StText")
-            st_text.set("StyleName", "지명, 인명 자막")
-            st_text.set("Mark", "")
-            st_text.text = new_content
+            if prev_caption:
+                print(caption.start - prev_caption.end, new_content)
 
+            if prev_caption and caption.start - prev_caption.end > 336000:
+                blank_item = self._build_st_item(row_count, prev_caption.end, "")
+                ats_cells.append(blank_item)
+                row_count += 1
+
+            item = self._build_st_item(row_count, caption.start, new_content)
             ats_cells.append(item)
 
             prev_caption = caption
