@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Subtitle Convert"
-#define MyAppVersion "0.0.1"
+#define MyAppVersion "0.0.2"
 #define MyAppPublisher "handrake"
 #define MyAppURL "https://github.com/handrake/subtitle-convert"
 #define MyAppExeName "subtitle_convert.exe"
@@ -33,8 +33,8 @@ Name: "korean"; MessagesFile: "compiler:Languages\Korean.isl"
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
 
 [Files]
-Source: "dist\subtitle_convert-0.0.1\subtitle_convert.exe"; DestDir: "{app}"; Flags: ignoreversion
-Source: "dist\subtitle_convert-0.0.1\*"; DestDir: "{app}"; Flags: recursesubdirs
+Source: "dist\subtitle_convert-{#MyAppVersion}\subtitle_convert.exe"; DestDir: "{app}"; Flags: ignoreversion
+Source: "dist\subtitle_convert-{#MyAppVersion}\*"; DestDir: "{app}"; Flags: recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files
 
 [Icons]
