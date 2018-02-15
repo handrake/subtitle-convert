@@ -111,7 +111,7 @@ class AtsWriter(BaseWriter):
             while '\n\n' in new_content:
                 new_content = new_content.replace('\n\n', '\n')
 
-            new_content = new_content.replace('\n', '|')
+            new_content = '|'.join(map(str.strip, new_content.split('\n')))
 
             st_text_list = etree.SubElement(item, "StTextList")
             st_text = etree.SubElement(st_text_list, "StText")
