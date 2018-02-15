@@ -3,6 +3,8 @@
 
 현재 SMI, SRT -> SMI, SRT, TXT 변환이 가능합니다. 인코딩도 지정이 가능합니다.
 
+<img src="https://i.imgur.com/nIUM5UO.png" width="400">
+
 # 설치
 
 ## 실행 파일
@@ -43,5 +45,3 @@ iscc subtitle_convert.iss
 ```
 
 Output 폴더에 SubtitleConvertSetup.exe가 만들어집니다.
-
-<img src="https://i.imgur.com/nIUM5UO.png" width="400">
