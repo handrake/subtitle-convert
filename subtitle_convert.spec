@@ -4,7 +4,7 @@ from distutils.sysconfig import get_python_lib
 
 block_cipher = None
 
-version = "0.0.2"
+version = "0.0.3"
 
 a = Analysis(['subtitle_convert/__main__.py'],
              pathex=[],
