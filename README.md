@@ -3,7 +3,7 @@
 
 현재 SMI, SRT -> SMI, SRT, TXT, ATS 변환이 가능합니다. 인코딩도 지정이 가능합니다.
 
-<img src="https://i.imgur.com/nIUM5UO.png" width="400">
+<img src="https://i.imgur.com/sxmWNM5.png" width="400">
 
 # 설치
 
