@@ -243,7 +243,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>38</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="file_menu">
@@ -251,6 +251,7 @@
      <string>파일</string>
     </property>
     <addaction name="add_file_action"/>
+    <addaction name="restore_default_settings_action"/>
     <addaction name="exit_action"/>
    </widget>
    <widget class="QMenu" name="help_menu">
@@ -285,6 +286,11 @@
    </property>
    <property name="shortcut">
     <string>F1</string>
+   </property>
+  </action>
+  <action name="restore_default_settings_action">
+   <property name="text">
+    <string>설정 초기화</string>
    </property>
   </action>
  </widget>

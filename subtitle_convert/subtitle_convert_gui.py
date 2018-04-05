@@ -18,6 +18,9 @@ SUPPORTED_OUTPUT_ENCODING = ["utf8", "cp949"]
 QSETTINGS_ORGANIZATION = "Zerovity"
 QSETTINGS_APPLICATION = "Subtitle Convert"
 
+DEFAULT_INPUT_FOLDER = os.path.expanduser('~')
+DEFAULT_OUTPUT_FOLDER = os.path.expanduser('~')
+
 class SubtitleConvertWorkerThread(QThread):
     log_signal = QtCore.pyqtSignal(str)
 
@@ -106,17 +109,18 @@ class SubtitleConvertMainWindow(QMainWindow):
         if self.settings.contains("last_input_folder"):
             self.last_input_folder = self.settings.value("last_input_folder")
         else:
-            self.last_input_folder = os.path.expanduser('~')
+            self.last_input_folder = DEFAULT_INPUT_FOLDER
 
         if self.settings.contains("last_output_folder"):
             self.last_output_folder = self.settings.value("last_output_folder")
         else:
-            self.last_output_folder = os.path.expanduser('~')
+            self.last_output_folder = DEFAULT_OUTPUT_FOLDER
 
         if self.settings.contains("overwrite_on"):
             self.overwrite_check.setChecked(bool(self.settings.value("overwrite_on")))
 
         self.add_file_action.triggered.connect(self._select_input_file)
+        self.restore_default_settings_action.triggered.connect(self._restore_default_settings)
         self.exit_action.triggered.connect(self.close)
         self.information_action.triggered.connect(self._open_information_dialog)
 
@@ -168,6 +172,12 @@ class SubtitleConvertMainWindow(QMainWindow):
         if file_names:
             self.last_input_folder = os.path.dirname(file_names[0])
         self.input_file_list.addItems(file_names)
+
+    def _restore_default_settings(self):
+        self.last_input_folder = DEFAULT_INPUT_FOLDER
+        self.last_output_folder = DEFAULT_OUTPUT_FOLDER
+        self.overwrite_check.setChecked(False)
+        self.output_folder_edit.setText(self.last_output_folder)
 
     def _delete_all_input_files(self):
         self.input_file_list.clear()
