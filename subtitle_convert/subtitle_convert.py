@@ -139,6 +139,6 @@ class AtsWriter(BaseWriter):
     def _recreate_line(self, ats, line):  # pylint: disable=no-self-use
         if line.type_ == CaptionNode.TEXT:
             return ats + '%s ' % line.content
-        elif line.type_ == CaptionNode.BREAK:
+        if line.type_ == CaptionNode.BREAK:
             return ats + '\n'
         return ats
